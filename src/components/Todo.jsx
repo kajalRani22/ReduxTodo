@@ -1,27 +1,32 @@
 
 import { MdDeleteForever } from "react-icons/md";
 import { useSelector, useDispatch } from "react-redux";
-import { addTask, deleteTask } from "../store";
+import { addTask, deleteTask, fetchTask } from "../store";
 import { useState } from "react";
 const Todo = () => {
-    const[task, setTask]= useState("")
+    const[task, setTask]= useState("");
   const tasks = useSelector((state) => state.task);
 
 
   const dispatch = useDispatch();
-  //handle form submit
-  const handleFormSubmit= (e)=>{
-    e.preventDefault();
-      dispatch(addTask(task));
-      return setTask("")
-  }
+  console.log(tasks);
+  
 
   //handle delt 
   const handleTaskDelete=(id)=>{
-    
-   return dispatch(deleteTask(id));
+    dispatch(deleteTask(id));
    
 
+  };
+  const handleFetchTasks=()=>{
+dispatch(fetchTask())
+  } 
+
+  const handleFormSubmit= (e)=>{
+    e.preventDefault();
+    if(task.trim())
+      dispatch(addTask(task));
+       setTask("");
   }
   return (
     <div className="container">
@@ -35,6 +40,9 @@ const Todo = () => {
             <button>Add Task</button>
           </form>
         </div>
+        <button onClick={handleFetchTasks}>Fetch Tasks
+             
+        </button>
         <ul id="list-container">
           {" "}
           {/* data display ho jayega screen pr*/}

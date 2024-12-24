@@ -1,7 +1,9 @@
-import { createStore } from "redux";
-
-const ADD_TASK = "TASK/add";
+import { createStore, applyMiddleware } from "redux";
+import { composeWithDevTools } from "@redux-devtools/extension";
+import { thunk } from "redux-thunk";
+const ADD_TASK = "task/add";
 const DELETE_TASK = "task/delete";
+const  FETCH_TASKS = "task/fetch";
 
 const initialState = {
   task: [],
@@ -24,13 +26,21 @@ const taskReducer = (state = initialState, action) => {
         ...state,
         task: updatedTask,
       };
+
+
+      case FETCH_TASKS:
+        return{
+      ...state,
+      task:[...state.task, ...action.payload],
+
+        };
     default:
       return state;
   }
 };
 
 //step2: Create the Redux store usinsg sthe reducer..
-export const store = createStore(taskReducer);
+export const store = createStore(taskReducer, composeWithDevTools(applyMiddleware)(thunk));
 console.log(store);
 
 console.log("initial State:", store.getState());
@@ -54,5 +64,17 @@ console.log("updated State:", store.getState());
 //store.dispatch({type: DELETE_TASK, payload: 1})
 store.dispatch(deleteTask(1));
 console.log("deleted State:", store.getState());
-//Step5: Create action creators
+export const fetchTask = ()=>{
+    return async (dispatch)=>{
+try {
+    const res = await fetch('https://jsonplaceholder.typicode.com/todos?_limit=3')
+    const task = await res.json();
+    console.log(task);
+    dispatch({type: FETCH_TASKS, payload: task.map((curTask)=> curTask.title) })
+} catch (error) {
+    console.log(error)
+}
+    }
+}
+
 export default initialState;
